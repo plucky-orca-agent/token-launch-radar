@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Launch Radar — pre-token protocols ranked by implied value</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead-in">
+    <p class="kicker">TOKEN LAUNCH RADAR</p>
+    <h1>Every protocol still waiting on a token, ranked by what that token may be worth.</h1>
+    <p class="lede" id="coverage-line">Reading the sealed snapshot…</p>
+    <p class="source-line" id="source-line"></p>
+  </div>
+</header>
+
+<main>
+  <section class="panel" id="board-panel" aria-labelledby="board-h">
+    <div class="board-head">
+      <h2 id="board-h">The board</h2>
+      <p class="board-count" id="board-count"></p>
+    </div>
+    <p class="formula">implied value = TVL × category multiple × growth × maturity × launch factor — the full model is stated below the board</p>
+    <div class="controls" role="search">
+      <label>Search <input type="search" id="q" placeholder="protocol name or slug"></label>
+      <label>Category <select id="f-category"><option value="">All categories</option></select></label>
+      <label>Chain <select id="f-chain"><option value="">All chains</option></select></label>
+      <label class="check"><input type="checkbox" id="f-watch"> House watchlist only</label>
+      <label>Sort <select id="f-sort">
+        <option value="rank">Implied value (rank)</option>
+        <option value="tvl">TVL</option>
+        <option value="growth">7-day growth</option>
+        <option value="age">Longest tokenless</option>
+        <option value="multiple">Category multiple</option>
+      </select></label>
+    </div>
+    <div class="table-wrap">
+      <table id="board">
+        <thead><tr>
+          <th class="num">#</th><th>Protocol</th><th>Category</th><th>Chains</th>
+          <th class="num">TVL</th><th class="num">7d</th><th class="num">Tokenless</th>
+          <th class="num">Implied value</th><th class="num">If launched</th>
+        </tr></thead>
+        <tbody id="board-body"></tbody>
+      </table>
+    </div>
+    <p class="hint">Select any row for its model breakdown and farm plan.</p>
+  </section>
+
+  <section class="panel model-panel" aria-labelledby="model-h">
+    <h2 id="model-h">How the ranking is made</h2>
+    <p>
+      A protocol joins the board when the snapshot records <strong>no token for it</strong> — no CoinGecko id, no
+      symbol — and it is an independent protocol, not a wrapped, staked or bridged product and not an exchange
+      balance sheet. Its implied value is built only from the snapshot's own figures:
+    </p>
+    <p class="formula">implied value = TVL × category multiple × growth × maturity × launch factor</p>
+    <ul class="model-list">
+      <li><strong>Category multiple</strong> — the median market-cap / TVL ratio of the token-bearing protocols in the same DefiLlama category, computed from this snapshot. A category with fewer than 3 priced peers uses the all-category median (<span id="global-multiple">—</span>). No flat multiple is imposed and no name is special-cased.</li>
+      <li><strong>Growth</strong> — 1 + clamp(7-day TVL change, −50%…+100%) × 0.35. A hot week lifts a value; it never makes one.</li>
+      <li><strong>Maturity</strong> — 0.78 + 0.22 × min(days live with no token, 1460) / 1460. Time survived at size, without a token, is evidence a launch is a decision still to come (unknown listing date: 0.88).</li>
+      <li><strong>Launch factor</strong> — 0.55 + 0.45 × the category's token share (smoothed): categories whose members usually launch score near 1; categories that usually stay tokenless are discounted.</li>
+    </ul>
+    <p>
+      Each protocol's detail view shows its own arithmetic, including the <em>value if launched</em> before the
+      launch factor. Wrapped and exchange products are listed apart at the bottom — a claim on an asset that
+      already trades is not a token that does not exist yet — and protocols already trading are shown at the
+      market's own values, never the model's.
+    </p>
+    <div id="category-table-wrap"></div>
+  </section>
+
+  <section class="panel detail-panel" id="detail" hidden aria-labelledby="detail-h"></section>
+
+  <section class="panel" id="products-panel" aria-labelledby="products-h">
+    <h2 id="products-h">Not launch candidates</h2>
+    <p id="products-intro"></p>
+    <div id="products-list"></div>
+  </section>
+
+  <section class="panel" id="live-panel" aria-labelledby="live-h">
+    <h2 id="live-h">Already trading — the calibration set</h2>
+    <p>The snapshot's largest token-bearing protocols at the market's own values. Their market-cap / TVL ratios are what calibrate the board's category multiples; none of them is ranked.</p>
+    <div id="live-list"></div>
+  </section>
+</main>
+
+<footer>
+  <p>Built from one sealed DefiLlama snapshot; figures move only when the snapshot does. Implied values are a model's estimate, not a price, and a farm plan is a starting point for your own research, not financial advice.</p>
+</footer>
+
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
